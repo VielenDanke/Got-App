@@ -5,11 +5,19 @@ import RandomChar from '../randomChar';
 import ItemList from '../itemList';
 import CharDetails from '../charDetails';
 import HideButton from '../hideButton'
+import ErrorMessage from "../errorMessage"
 
 export default class App extends Component {
 
     state = {
-        visible: true
+        visible: true,
+        selectedChar: null,
+        error: false
+    }
+
+    componentDidCatch() {
+        console.log("Error")
+        this.setState({error: true})
     }
 
     onClickHide = () => {
@@ -21,8 +29,16 @@ export default class App extends Component {
         })
     }
 
+    onCharSelected = (id) => {
+        this.setState({selectedChar: id})
+    }
+
     render() {
-        const {visible} = this.state
+        const {visible, selectedChar, error} = this.state
+
+        if (error) {
+            return <ErrorMessage/>
+        }
 
         const component = visible ? <RandomChar/> : null
 
@@ -40,10 +56,10 @@ export default class App extends Component {
                     <HideButton onClickHide={this.onClickHide}/>
                     <Row>
                         <Col md='6'>
-                            <ItemList />
+                            <ItemList onCharSelected={this.onCharSelected}/>
                         </Col>
                         <Col md='6'>
-                            <CharDetails />
+                            <CharDetails charId={selectedChar}/>
                         </Col>
                     </Row>
                 </Container>
