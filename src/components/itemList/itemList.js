@@ -24,7 +24,7 @@ export default class ItemList extends Component {
 
         return array.map((item, i) => {
             return (
-                <li key={i} className="list-group-item" onClick={() => onCharSelected(i)}>
+                <li key={i} className="list-group-item" onClick={() => onCharSelected(41 + i)}>
                     {item.name}
                 </li>
             )

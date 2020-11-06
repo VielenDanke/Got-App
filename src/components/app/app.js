@@ -2,16 +2,14 @@ import React, {Component} from 'react';
 import {Col, Row, Container} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
-import ItemList from '../itemList';
-import CharDetails from '../charDetails';
 import HideButton from '../hideButton'
 import ErrorMessage from "../errorMessage"
+import CharacterPage from "../characterPage"
 
 export default class App extends Component {
 
     state = {
         visible: true,
-        selectedChar: null,
         error: false
     }
 
@@ -29,12 +27,8 @@ export default class App extends Component {
         })
     }
 
-    onCharSelected = (id) => {
-        this.setState({selectedChar: id})
-    }
-
     render() {
-        const {visible, selectedChar, error} = this.state
+        const {visible, error} = this.state
 
         if (error) {
             return <ErrorMessage/>
@@ -54,14 +48,7 @@ export default class App extends Component {
                         </Col>
                     </Row>
                     <HideButton onClickHide={this.onClickHide}/>
-                    <Row>
-                        <Col md='6'>
-                            <ItemList onCharSelected={this.onCharSelected}/>
-                        </Col>
-                        <Col md='6'>
-                            <CharDetails charId={selectedChar}/>
-                        </Col>
-                    </Row>
+                    <CharacterPage/>
                 </Container>
             </>
         );
