@@ -1,43 +1,76 @@
 import React, {Component} from 'react';
 import './charDetails.css';
-import gotService from "../../services/gotService"
+import gotService from '../../services/gotService';
+import ErrorMessage from '../error';
+import Spinner from '../spinner/';
 
 export default class CharDetails extends Component {
 
-    gotService = new gotService()
+    gotService = new gotService();
 
     state = {
-        characetr: null
+        char: null,
+        loading: true,
+        error: false
     }
 
     componentDidMount() {
-        this.updateChar()
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.charId !== prevProps.charId) {
-            this.updateChar()
-        }
-    }
-
-    updateChar = () => {
-        const {charId} = this.props
+        this.updateChar();
         
-        if (!charId) {
-            return
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.charId !== prevProps.charId) {
+            this.updateChar();
         }
+    }
+
+    onCharDetailsLoaded = (char) => {
+        this.setState({
+            char,
+            loading: false
+        })
+    }
+
+    updateChar() {
+        const {charId} = this.props;
+        if (!charId) {
+            return;
+        }
+
+        this.setState({
+            loading: true
+        })
+
         this.gotService.getCharacter(charId)
-            .then(character => this.setState({character: character}))
+            .then( this.onCharDetailsLoaded )
+            .catch( () => this.onError())
+    }
+
+    onError(){
+        this.setState({
+            char: null,
+            error: true
+        })
     }
 
     render() {
-        const {character} = this.state
 
-        if (!character) {
+        if (!this.state.char && this.state.error) {
+            return <ErrorMessage/>
+        } else if (!this.state.char) {
             return <span className="select-error">Please select a character</span>
         }
 
-        const {name, gender, born, died, culture} = character
+        const {name, gender, born, died, culture} = this.state.char;
+
+        if (this.state.loading) {
+            return (
+                <div className="char-details rounded">
+                    <Spinner/>
+                </div>
+            )
+        }
 
         return (
             <div className="char-details rounded">
